@@ -132,7 +132,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -1%")
         , ((modm .|. shiftMask   , xF86XK_AudioMute)        , spawn "pactl set-sink-volume -- 0 100%")
 
-        , ((modm                 , xF86XK_AudioPlay)        , spawn "mpc play")
+        , ((modm                 , xF86XK_AudioPlay)        , spawn "mpc toggle")
         , ((modm                 , xF86XK_AudioStop)        , spawn "mpc stop")
         , ((modm                 , xF86XK_AudioNext)        , spawn "mpc next")
         , ((modm                 , xF86XK_AudioPrev)        , spawn "mpc prev")
