@@ -217,7 +217,7 @@ myStartupHook = return ()
 -- Actually start xmonad {{{
 main = do 
         home <- getHomeDirectory
-        dzenPP <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600"
+        dzenPP <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600 -e '' -dock"
         xmonad $ ewmh defaultConfig 
             { terminal           = myTerminal
             , focusFollowsMouse  = myFocusFollowsMouse
