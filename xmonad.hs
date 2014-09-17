@@ -123,6 +123,21 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm                 , xK_m        ) , withWorkspace myXPConfig (windows . W.shift))
         , ((modm .|. shiftMask   , xK_r        ) , renameWorkspace myXPConfig)
         , ((modm                 , xK_n        ) , addWorkspacePrompt myXPConfig)
+
+        , ((modm                 , xK_l        ) , spawn "xscreensaver-command -lock")
+
+        , ((modm , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume -- 0 +5%")
+        , ((modm , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -5%")
+        , ((modm , xF86XK_AudioMute)        , spawn "pactl set-sink-mute 0 toggle")
+        , ((modm .|. shiftMask   , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume -- 0 +1%")
+        , ((modm .|. shiftMask   , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -1%")
+        , ((modm .|. shiftMask   , xF86XK_AudioMute)        , spawn "pactl set-sink-volume -- 0 100%")
+
+        , ((modm , xF86XK_AudioPlay)        , spawn "mpc play")
+        , ((modm , xF86XK_AudioStop)        , spawn "mpc stop")
+        , ((modm , xF86XK_AudioNext)        , spawn "mpc next")
+        , ((modm , xF86XK_AudioPrev)        , spawn "mpc prev")
+        , ((modm , xF86XK_Calculator)       , spawn "gnome-calculator")
     ]
     ++
     zip (zip (repeat (modm)) [xK_1..xK_9]) (map (withNthWorkspace W.greedyView) [0..])
