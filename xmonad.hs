@@ -124,7 +124,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xK_r)                    , renameWorkspace myXPConfig)
         , ((modm                 , xK_n)                    , addWorkspacePrompt myXPConfig)
 
-        , ((modm                 , xK_l)                    , spawn "xscreensaver-command -lock")
+        , ((modm  .|. shiftMask  , xK_l)                    , spawn "xscreensaver-command -lock")
 
         , ((modm                 , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume -- 0 +5%")
         , ((modm                 , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -5%")
