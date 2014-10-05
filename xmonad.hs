@@ -74,6 +74,7 @@ myWorkspaces    = ["term"]
 -- }}}
 -- Key bindings. Add, modify or remove key bindings here. {{{
 altMask = mod1Mask -- mod1Mask just isn't verbose enough
+xF86XK_TouchpadToggle = 269025193
 myXPConfig = defaultXPConfig {
                     position = Top
                     , searchPredicate = L.isInfixOf
@@ -137,6 +138,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , (( 0                   , xF86XK_AudioNext)        , spawn "mpc next")
         , (( 0                   , xF86XK_AudioPrev)        , spawn "mpc prev")
         , (( 0                   , xF86XK_Calculator)       , spawn "gnome-calculator")
+
+        , (( 0                   , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=1")
+        , (( shiftMask           , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=0")
     ]
     ++
     zip (zip (repeat (modm)) [xK_1..xK_9]) (map (withNthWorkspace W.greedyView) [0..])
