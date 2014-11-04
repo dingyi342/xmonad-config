@@ -3,6 +3,7 @@ import XMonad
 
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicWorkspaces
+import XMonad.Actions.DynamicWorkspaceOrder as DO
 -- import XMonad.Actions.CopyWindow(copy)
 
 import XMonad.Hooks.DynamicLog
@@ -101,24 +102,23 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm                 , xK_t)                    , withFocused $ windows . W.sink)
         , ((modm                 , xK_comma)                , sendMessage $ IncMasterN 1)
         , ((modm                 , xK_period)               , sendMessage $ IncMasterN (-1))
-
         , ((modm                 , xK_b)                    , sendMessage ToggleStruts)
-        , ((modm                 , xK_Right)                , moveTo Next NonEmptyWS)
-        , ((modm                 , xK_Left)                 , moveTo Prev NonEmptyWS)
-        , ((modm .|. shiftMask   , xK_Right)                , shiftTo Next NonEmptyWS)
-        , ((modm .|. shiftMask   , xK_Left)                 , shiftTo Prev NonEmptyWS)
-        , ((modm .|. altMask     , xK_Right)                , moveTo Next AnyWS)
-        , ((modm .|. altMask     , xK_Left)                 , moveTo Prev AnyWS)
+
+        , ((modm                 , xK_Right)                , DO.moveTo Next NonEmptyWS)
+        , ((modm                 , xK_Left)                 , DO.moveTo Prev NonEmptyWS)
+        , ((modm .|. shiftMask   , xK_Right)                , DO.shiftTo Next NonEmptyWS)
+        , ((modm .|. shiftMask   , xK_Left)                 , DO.shiftTo Prev NonEmptyWS)
+        , ((modm .|. altMask     , xK_Right)                , DO.swapWith Next NonEmptyWS)
+        , ((modm .|. altMask     , xK_Left)                 , DO.swapWith Prev NonEmptyWS)
+
         , ((modm                 , xK_z)                    , toggleWS)
+        , ((modm .|. shiftMask   , xK_g)                    , windowPromptGoto  myXPConfig)
+        , ((modm .|. shiftMask   , xK_b)                    , windowPromptBring myXPConfig)
 
         , ((modm                 , xK_q)                    , spawn "systemctl --user restart xmonad")
         , ((modm .|. shiftMask   , xK_q)                    , spawn "systemctl --user stop xorg@0")
 
-        , ((modm .|. shiftMask   , xK_g)                    , windowPromptGoto  myXPConfig)
-        , ((modm .|. shiftMask   , xK_b)                    , windowPromptBring myXPConfig)
         , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig "/home/lucas/NOTES")
-
-        , ((modm .|. controlMask , xK_x)                    , runOrRaisePrompt myXPConfig)
 
         , ((modm .|. shiftMask   , xK_BackSpace)            , removeWorkspace)
         , ((modm .|. shiftMask   , xK_v)                    , selectWorkspace myXPConfig)
@@ -135,19 +135,19 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -1%")
         , ((modm .|. shiftMask   , xF86XK_AudioMute)        , spawn "pactl set-sink-volume -- 0 100%")
 
-        , (( 0                   , xF86XK_AudioPlay)        , spawn "mpc toggle")
-        , (( 0                   , xF86XK_AudioStop)        , spawn "mpc stop")
-        , (( 0                   , xF86XK_AudioNext)        , spawn "mpc next")
-        , (( 0                   , xF86XK_AudioPrev)        , spawn "mpc prev")
-        , (( 0                   , xF86XK_Calculator)       , spawn "gnome-calculator")
+        , ((0                    , xF86XK_AudioPlay)        , spawn "mpc toggle")
+        , ((0                    , xF86XK_AudioStop)        , spawn "mpc stop")
+        , ((0                    , xF86XK_AudioNext)        , spawn "mpc next")
+        , ((0                    , xF86XK_AudioPrev)        , spawn "mpc prev")
+        , ((0                    , xF86XK_Calculator)       , spawn "gnome-calculator")
 
         , (( 0                   , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=1")
         , (( shiftMask           , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=0")
     ]
     ++
-    zip (zip (repeat (modm)) [xK_1..xK_9]) (map (withNthWorkspace W.greedyView) [0..])
+    zip (zip (repeat (modm)) [xK_1..xK_9]) (map (DO.withNthWorkspace W.greedyView) [0..])
     ++
-    zip (zip (repeat (modm .|. shiftMask)) [xK_1..xK_9]) (map (withNthWorkspace W.shift) [0..])
+    zip (zip (repeat (modm .|. shiftMask)) [xK_1..xK_9]) (map (DO.withNthWorkspace W.shift) [0..])
 
 -- }}}
 -- Mouse bindings: default actions bound to mouse events {{{
@@ -223,6 +223,7 @@ myEventHook = mempty
 
 myLogHook h = dynamicLogWithPP $ defaultPP {
             ppOutput = hPutStrLn h
+            , ppSort = DO.getSortByOrder
         }
 -- }}}
 -- Startup hook {{{
