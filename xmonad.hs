@@ -141,8 +141,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((0                    , xF86XK_AudioPrev)        , spawn "mpc prev")
         , ((0                    , xF86XK_Calculator)       , spawn "gnome-calculator")
 
-        , (( 0                   , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=1")
-        , (( shiftMask           , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=0")
+        , ((0                    , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=1")
+        , ((shiftMask            , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=0")
     ]
     ++
     zip (zip (repeat (modm)) [xK_1..xK_9]) (map (DO.withNthWorkspace W.greedyView) [0..])
