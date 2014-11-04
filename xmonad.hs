@@ -20,6 +20,8 @@ import XMonad.Prompt.Shell
 import XMonad.Util.Run
 import XMonad.Util.WorkspaceCompare
 
+import XMonad.Layout.SimpleFloat
+
 import Data.Monoid
 import Data.Time
 import System.Exit
@@ -175,7 +177,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 
-myLayout = avoidStruts ( Full ||| Mirror tiled ||| tiled )
+myLayout = avoidStruts ( Full ||| Mirror tiled ||| tiled ||| simpleFloat )
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
