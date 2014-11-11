@@ -24,6 +24,9 @@ import XMonad.Layout.SimpleFloat
 import XMonad.Layout.Minimize
 import XMonad.Layout.Maximize
 import XMonad.Layout.Renamed
+import XMonad.Layout.Accordion
+import XMonad.Layout.ThreeColumns
+import XMonad.Layout.Drawer
 
 import Data.Monoid
 import Data.Time
@@ -187,9 +190,13 @@ myLayout = avoidStruts (
             renamed [Replace "Full"] ( common Full )
         ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         ||| renamed [Replace "Tiled"] ( common tiled )
+        ||| renamed [Replace "Acordion"] ( common Accordion )
+        ||| renamed [Replace "Columns"] ( common $ ThreeColMid 1 0.03 0.5 )
         ||| renamed [Replace "Simple"] ( common simpleFloat )
+        ||| renamed [Replace "Drawer"] ( common (drawer `onTop` (Tall 1 0.03 0.5)))
     ) 
     where
+        drawer = simpleDrawer 0.01 0.3 (ClassName "Rhythmbox" `Or` ClassName "Sonata")
         -- Stuff common for all layout
         -- TODO should eventually remember haskell and replace this with and fmap or something
         common l = maximize ( minimize ( l ) )
