@@ -27,6 +27,8 @@ import XMonad.Layout.Renamed
 import XMonad.Layout.Accordion
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.Drawer
+import XMonad.Layout.NoBorders
+import XMonad.Layout.Spacing
 
 import Data.Monoid
 import Data.Time
@@ -199,7 +201,7 @@ myLayout = avoidStruts (
         drawer = simpleDrawer 0.01 0.3 (ClassName "Rhythmbox" `Or` ClassName "Sonata")
         -- Stuff common for all layout
         -- TODO should eventually remember haskell and replace this with and fmap or something
-        common l = maximize ( minimize ( l ) )
+        common l = maximize ( minimize ( smartSpacing 3 ( noBorders (l) ) ) )
         -- default tiling algorithm partitions the screen into two panes
         tiled   = Tall 1 0.03 0.5
 
