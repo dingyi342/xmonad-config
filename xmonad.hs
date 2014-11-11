@@ -4,7 +4,6 @@ import XMonad
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.DynamicWorkspaceOrder as DO
--- import XMonad.Actions.CopyWindow(copy)
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -22,6 +21,8 @@ import XMonad.Util.Run
 import XMonad.Util.WorkspaceCompare
 
 import XMonad.Layout.SimpleFloat
+import XMonad.Layout.Minimize
+import XMonad.Layout.Maximize
 
 import Data.Monoid
 import Data.Time
@@ -87,7 +88,7 @@ myXPConfig = defaultXPConfig {
         -- , ((modm .|. shiftMask   , xK_m        ) , withWorkspace myXPConfig (windows . copy))
         -- , ((modm                 , xK_p        ) , spawn "dmenu_run")
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-    [     ((modm .|. shiftMask   , xK_Return) , spawn $ XMonad.terminal conf)
+    [     ((modm .|. shiftMask   , xK_Return)               , spawn $ XMonad.terminal conf)
         , ((modm                 , xK_p)                    , shellPrompt myXPConfig)
         , ((modm                 , xK_c)                    , kill)
         , ((modm                 , xK_space)                , sendMessage NextLayout)
@@ -115,6 +116,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xK_g)                    , windowPromptGoto  myXPConfig)
         , ((modm .|. shiftMask   , xK_b)                    , windowPromptBring myXPConfig)
 
+        , ((modm                 , xK_s)                    , withFocused minimizeWindow)
+        , ((modm .|. shiftMask   , xK_s)                    , sendMessage RestoreNextMinimizedWin)
+        , ((modm                 , xK_r)                    , withFocused (sendMessage . maximizeRestore))
+
         , ((modm                 , xK_q)                    , spawn "systemctl --user restart xmonad")
         , ((modm .|. shiftMask   , xK_q)                    , spawn "systemctl --user stop xorg@0")
 
@@ -123,10 +128,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xK_BackSpace)            , removeWorkspace)
         , ((modm .|. shiftMask   , xK_v)                    , selectWorkspace myXPConfig)
         , ((modm                 , xK_m)                    , withWorkspace myXPConfig (windows . W.shift))
-        , ((modm .|. shiftMask   , xK_r)                    , renameWorkspace myXPConfig)
+        , ((modm .|. controlMask , xK_r)                    , renameWorkspace myXPConfig)
         , ((modm                 , xK_n)                    , addWorkspacePrompt myXPConfig)
 
-        , ((modm  .|. shiftMask  , xK_l)                    , spawn "xscreensaver-command -lock")
+        , ((modm .|. controlMask , xK_l)                    , spawn "xscreensaver-command -lock")
 
         , ((modm                 , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume -- 0 +5%")
         , ((modm                 , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -5%")
@@ -177,19 +182,24 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 
-myLayout = avoidStruts ( Full ||| Mirror tiled ||| tiled ||| simpleFloat )
-  where
-     -- default tiling algorithm partitions the screen into two panes
-     tiled   = Tall nmaster delta ratio
+myLayout = avoidStruts ( maximize ( minimize ( 
+            Full 
+        ||| Mirror tiled 
+        ||| tiled 
+        ||| simpleFloat 
+    ) ) )
+    where
+        -- default tiling algorithm partitions the screen into two panes
+        tiled   = Tall nmaster delta ratio
 
-     -- The default number of windows in the master pane
-     nmaster = 1
+        -- The default number of windows in the master pane
+        nmaster = 1
 
-     -- Default proportion of screen occupied by master pane
-     ratio   = 1/2
+        -- Default proportion of screen occupied by master pane
+        ratio   = 1/2
 
-     -- Percent of screen to increment by when resizing panes
-     delta   = 3/100
+        -- Percent of screen to increment by when resizing panes
+        delta   = 3/100
 
 -- }}}
 -- Window rules: {{{
