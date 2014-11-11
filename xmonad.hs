@@ -194,7 +194,7 @@ myLayout = avoidStruts (
         -- TODO should eventually remember haskell and replace this with and fmap or something
         common l = maximize ( minimize ( l ) )
         -- default tiling algorithm partitions the screen into two panes
-        tiled   = Tall 1 (1/2) (3/100)
+        tiled   = Tall 1 0.03 0.5
 
 -- }}}
 -- Window rules: {{{
