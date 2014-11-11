@@ -23,6 +23,7 @@ import XMonad.Util.WorkspaceCompare
 import XMonad.Layout.SimpleFloat
 import XMonad.Layout.Minimize
 import XMonad.Layout.Maximize
+import XMonad.Layout.Renamed
 
 import Data.Monoid
 import Data.Time
@@ -182,24 +183,18 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 
-myLayout = avoidStruts ( maximize ( minimize ( 
-            Full 
-        ||| Mirror tiled 
-        ||| tiled 
-        ||| simpleFloat 
-    ) ) )
+myLayout = avoidStruts (
+            renamed [Replace "Full"] ( common Full )
+        ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
+        ||| renamed [Replace "Tiled"] ( common tiled )
+        ||| renamed [Replace "Simple"] ( common simpleFloat )
+    ) 
     where
+        -- Stuff common for all layout
+        -- TODO should eventually remember haskell and replace this with and fmap or something
+        common l = maximize ( minimize ( l ) )
         -- default tiling algorithm partitions the screen into two panes
-        tiled   = Tall nmaster delta ratio
-
-        -- The default number of windows in the master pane
-        nmaster = 1
-
-        -- Default proportion of screen occupied by master pane
-        ratio   = 1/2
-
-        -- Percent of screen to increment by when resizing panes
-        delta   = 3/100
+        tiled   = Tall 1 (1/2) (3/100)
 
 -- }}}
 -- Window rules: {{{
