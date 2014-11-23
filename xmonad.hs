@@ -228,7 +228,7 @@ myManageHook = composeAll
 -- * EwmhDesktops users should change this to ewmhDesktopsEventHook
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 
-myEventHook = mempty
+myEventHook = docksEventHook
 -- }}}
 -- Status bars and logging {{{
 
