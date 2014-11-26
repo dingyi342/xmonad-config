@@ -219,6 +219,7 @@ myManageHook = composeAll
     , className                =? "Firefox"               --> liftX (addWorkspace "www")  >> doShift "www"
     , className                =? "luakit"                --> liftX (addWorkspace "www")  >> doShift "www"
     , className                =? "URxvt"                 --> liftX (addWorkspace "term") >> doShift "term"
+    , className                =? "Telegram"              --> liftX (addWorkspace "im")  >> doShift "im"
     , className                =? "Gimp"                  --> doFloat
     , className                =? "Speedcrunch"           --> doFloat
     , stringProperty "WM_NAME" =? "Event Tester"          --> doFloat
