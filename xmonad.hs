@@ -148,7 +148,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((0                    , xF86XK_AudioStop)        , spawn "mpc stop")
         , ((0                    , xF86XK_AudioNext)        , spawn "mpc next")
         , ((0                    , xF86XK_AudioPrev)        , spawn "mpc prev")
-        , ((0                    , xF86XK_Calculator)       , spawn "gnome-calculator")
+        , ((0                    , xF86XK_Calculator)       , spawn "speedcrunch")
 
         , ((0                    , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=1")
         , ((shiftMask            , xF86XK_TouchpadToggle)   , spawn "synclient TouchpadOff=0")
@@ -220,6 +220,7 @@ myManageHook = composeAll
     , className                =? "luakit"                --> liftX (addWorkspace "www")  >> doShift "www"
     , className                =? "URxvt"                 --> liftX (addWorkspace "term") >> doShift "term"
     , className                =? "Gimp"                  --> doFloat
+    , className                =? "Speedcrunch"           --> doFloat
     , stringProperty "WM_NAME" =? "Event Tester"          --> doFloat
     , manageDocks]
 -- }}}
