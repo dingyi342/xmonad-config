@@ -7,7 +7,7 @@ import XMonad.Actions.DynamicWorkspaceOrder as DO
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.FadeInactive
+import XMonad.Hooks.Minimize
 import XMonad.Hooks.EwmhDesktops
 
 import XMonad.Prompt
@@ -230,7 +230,7 @@ myManageHook = composeAll
 -- * EwmhDesktops users should change this to ewmhDesktopsEventHook
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 
-myEventHook = docksEventHook
+myEventHook = docksEventHook <+> ewmhDesktopsEventHook <+> minimizeEventHook
 -- }}}
 -- Status bars and logging {{{
 
