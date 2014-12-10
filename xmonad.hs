@@ -216,6 +216,7 @@ myManageHook = composeAll
     , resource                 =? "kdesktop"              --> doIgnore
     , className                =? "Screenkey"             --> doIgnore
     , className                =? "Google-chrome-stable"  --> liftX (addWorkspace "www")  >> doShift "www"
+    , className                =? "Chromium"              --> liftX (addWorkspace "www")  >> doShift "www"
     , className                =? "Firefox"               --> liftX (addWorkspace "www")  >> doShift "www"
     , className                =? "luakit"                --> liftX (addWorkspace "www")  >> doShift "www"
     , className                =? "URxvt"                 --> liftX (addWorkspace "term") >> doShift "term"
