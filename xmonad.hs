@@ -252,8 +252,8 @@ myEventHook = docksEventHook <+> ewmhDesktopsEventHook <+> minimizeEventHook
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 
-myLogHook h = dynamicLogWithPP $ def {
-            ppOutput = hPutStrLn h
+myLogHook s = dynamicLogWithPP $ def {
+            ppOutput = void . send s
             , ppHiddenNoWindows = id
             , ppSort = DO.getSortByOrder
         }
@@ -271,9 +271,11 @@ myStartupHook = setWMName "LG3D"
 -- Actually start xmonad {{{
 main :: IO ()
 main = do
-        -- home <- getHomeDirectory
-        dzenPipe <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600 -e '' -dock"
-        xmonad $ ewmh def
+        home <- getHomeDirectory
+        dzenSoc <- socket AF_UNIX Stream 0
+        connect dzenSoc (SockAddrUnix (home ++ "/.xmonad/log.soc"))
+        -- dzenPP <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600 -e '' -dock"
+        xmonad $ ewmh defaultConfig
             { terminal           = myTerminal
             , focusFollowsMouse  = myFocusFollowsMouse
             , clickJustFocuses   = myClickJustFocuses
@@ -289,7 +291,7 @@ main = do
             , layoutHook         = myLayout
             , manageHook         = myManageHook
             , handleEventHook    = myEventHook
-            , logHook            = myLogHook dzenPipe
+            , logHook            = myLogHook dzenSoc
             , startupHook        = myStartupHook
             }
 -- }}}
