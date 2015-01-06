@@ -253,7 +253,9 @@ myEventHook = docksEventHook <+> ewmhDesktopsEventHook <+> minimizeEventHook
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 
 myLogHook s = dynamicLogWithPP $ def {
-            ppOutput = void . send s
+            ppOutput = (\c -> do
+                            send s c
+                            return ())
             , ppHiddenNoWindows = id
             , ppSort = DO.getSortByOrder
         }
