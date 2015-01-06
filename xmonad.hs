@@ -27,6 +27,7 @@ import XMonad.Layout.Renamed
 import XMonad.Layout.Accordion
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.Drawer
+import XMonad.Layout.BinarySpacePartition
 
 import Data.Monoid
 import Data.Time
@@ -99,16 +100,27 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xK_space)                , setLayout $ XMonad.layoutHook conf)
         , ((modm                 , xK_Tab)                  , windows W.focusDown)
         , ((modm .|. shiftMask   , xK_Tab)                  , windows W.focusUp)
-        , ((modm                 , xK_Return)               , windows W.swapMaster)
-        , ((modm .|. shiftMask   , xK_j)                    , windows W.swapDown)
-        , ((modm .|. shiftMask   , xK_k)                    , windows W.swapUp)
-        , ((modm                 , xK_h)                    , sendMessage Shrink)
-        , ((modm                 , xK_l)                    , sendMessage Expand)
-        , ((modm                 , xK_t)                    , withFocused $ windows . W.sink)
-        , ((modm                 , xK_comma)                , sendMessage $ IncMasterN 1)
-        , ((modm                 , xK_period)               , sendMessage $ IncMasterN (-1))
-        , ((modm                 , xK_b)                    , sendMessage ToggleStruts)
+        -- , ((modm                 , xK_Return)               , windows W.swapMaster)
+        -- , ((modm .|. shiftMask   , xK_j)                    , windows W.swapDown)
+        -- , ((modm .|. shiftMask   , xK_k)                    , windows W.swapUp)
+        -- , ((modm                 , xK_h)                    , sendMessage Shrink)
+        -- , ((modm                 , xK_l)                    , sendMessage Expand)
+        -- , ((modm                 , xK_t)                    , withFocused $ windows . W.sink)
+        -- , ((modm                 , xK_comma)                , sendMessage $ IncMasterN 1)
+        -- , ((modm                 , xK_period)               , sendMessage $ IncMasterN (-1))
 
+       , ((modm .|. altMask,               xK_l     ), sendMessage $ ExpandTowards R)
+       , ((modm .|. altMask,               xK_h     ), sendMessage $ ExpandTowards L)
+       , ((modm .|. altMask,               xK_j     ), sendMessage $ ExpandTowards D)
+       , ((modm .|. altMask,               xK_k     ), sendMessage $ ExpandTowards U)
+       , ((modm .|. altMask .|. controlMask , xK_l     ), sendMessage $ ShrinkFrom R)
+       , ((modm .|. altMask .|. controlMask , xK_h     ), sendMessage $ ShrinkFrom L)
+       , ((modm .|. altMask .|. controlMask , xK_j     ), sendMessage $ ShrinkFrom D)
+       , ((modm .|. altMask .|. controlMask , xK_k     ), sendMessage $ ShrinkFrom U)
+       , ((modm,                           xK_r     ), sendMessage Rotate)
+       , ((modm,                           xK_s     ), sendMessage Swap)
+
+        , ((modm                 , xK_b)                    , sendMessage ToggleStruts)
         , ((modm                 , xK_Right)                , DO.moveTo Next AnyWS)
         , ((modm                 , xK_Left)                 , DO.moveTo Prev AnyWS)
         , ((modm .|. shiftMask   , xK_Right)                , DO.shiftTo Next AnyWS)
