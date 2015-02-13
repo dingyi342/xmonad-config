@@ -137,12 +137,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
         , ((modm .|. controlMask , xK_l)                    , spawn "xscreensaver-command -lock")
 
-        , ((modm                 , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume -- 0 +5%")
-        , ((modm                 , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -5%")
+        , ((modm                 , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume 0 +5%")
+        , ((modm                 , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume 0 -5%")
         , ((modm                 , xF86XK_AudioMute)        , spawn "pactl set-sink-mute 0 toggle")
-        , ((modm .|. shiftMask   , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume -- 0 +1%")
-        , ((modm .|. shiftMask   , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume -- 0 -1%")
-        , ((modm .|. shiftMask   , xF86XK_AudioMute)        , spawn "pactl set-sink-volume -- 0 100%")
+        , ((modm .|. shiftMask   , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume 0 +1%")
+        , ((modm .|. shiftMask   , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume 0 -1%")
+        , ((modm .|. shiftMask   , xF86XK_AudioMute)        , spawn "pactl set-sink-volume 0 100%")
 
         , ((0                    , xF86XK_AudioPlay)        , spawn "mpc toggle")
         , ((0                    , xF86XK_AudioStop)        , spawn "mpc stop")
