@@ -221,6 +221,7 @@ myManageHook = composeAll
     , className                =? "luakit"                --> liftX (addWorkspace "www")  >> doShift "www"
     , className                =? "URxvt"                 --> liftX (addWorkspace "term") >> doShift "term"
     , className                =? "Telegram"              --> liftX (addWorkspace "im")  >> doShift "im"
+    , className                =? "Pidgin"                --> liftX (addWorkspace "im")  >> doShift "im"
     , className                =? "Qalculate"             --> doFloat
     , stringProperty "WM_NAME" =? "Event Tester"          --> doFloat
     , manageDocks]
