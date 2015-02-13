@@ -124,8 +124,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xK_s)                    , sendMessage RestoreNextMinimizedWin)
         , ((modm                 , xK_r)                    , withFocused (sendMessage . maximizeRestore))
 
-        , ((modm                 , xK_Escape)               , spawn "systemctl --user restart xmonad")
-        , ((modm .|. shiftMask   , xK_Escape)               , spawn "systemctl --user stop xorg@0")
+        , ((modm                 , xK_Escape)               , restart "xmonad" True)
+        , ((modm .|. shiftMask   , xK_Escape)               , io (exitWith ExitSuccess))
 
         , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig "/home/lucas/NOTES")
 
