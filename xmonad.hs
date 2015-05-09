@@ -11,14 +11,11 @@ import XMonad.Hooks.Minimize
 import XMonad.Hooks.EwmhDesktops
 
 import XMonad.Prompt
-import XMonad.Prompt.Input
 import XMonad.Prompt.Window
 import XMonad.Prompt.AppendFile
-import XMonad.Prompt.RunOrRaise
 import XMonad.Prompt.Shell
 
 import XMonad.Util.Run
-import XMonad.Util.WorkspaceCompare
 
 import XMonad.Layout.SimpleFloat
 import XMonad.Layout.Minimize
@@ -28,8 +25,6 @@ import XMonad.Layout.Accordion
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.Drawer
 
-import Data.Monoid
-import Data.Time
 import System.Exit
 import System.Directory
 import Graphics.X11.ExtraTypes.XF86
@@ -41,8 +36,8 @@ import qualified Data.List          as L
 -- Common defaults {{{
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
-
-myTerminal      = "urxvtc"
+myTerminal :: [Char]
+myTerminal = "urxvtc"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -53,19 +48,20 @@ myClickJustFocuses :: Bool
 myClickJustFocuses = False
 
 -- Width of the window border in pixels.
-
-myBorderWidth   = 0
+myBorderWidth :: Dimension
+myBorderWidth = 0
 
 -- modMask lets you specify which modkey you want to use. The default
 -- is mod1Mask ("left alt").  You may also consider using mod3Mask
 -- ("right alt"), which does not conflict with emacs keybindings. The
 -- "windows key" is usually mod4Mask.
-
-myModMask       = mod4Mask
+myModMask :: KeyMask
+myModMask = mod4Mask
 
 -- Border colors for unfocused and focused windows, respectively.
-
+myNormalBorderColor :: [Char]
 myNormalBorderColor  = "#dddddd"
+myFocusedBorderColor :: [Char]
 myFocusedBorderColor = "#ff0000"
 -- }}}
 -- Workspaces {{{
@@ -77,20 +73,25 @@ myFocusedBorderColor = "#ff0000"
 -- A tagging example:
 
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
-
-myWorkspaces    = ["term"]
+myWorkspaces :: [String]
+myWorkspaces = ["term"]
 -- }}}
 -- Key bindings. Add, modify or remove key bindings here. {{{
+altMask :: KeyMask
 altMask = mod1Mask -- mod1Mask just isn't verbose enough
+xF86XK_TouchpadToggle :: KeySym
 xF86XK_TouchpadToggle = 269025193
+myXPConfig :: XPConfig
 myXPConfig = defaultXPConfig {
                     position = Top
                     , searchPredicate = L.isInfixOf
                 }
-        -- , ((modm               , xK_m        ) , windows W.focusMaster)
-        -- , ((modm               , xK_n        ) , refresh)
+        -- , ((modm                 , xK_m        ) , windows W.focusMaster)
+        -- , ((modm                 , xK_n        ) , refresh)
         -- , ((modm .|. shiftMask   , xK_m        ) , withWorkspace myXPConfig (windows . copy))
         -- , ((modm                 , xK_p        ) , spawn "dmenu_run")
+
+myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [     ((modm .|. shiftMask   , xK_Return)               , spawn $ XMonad.terminal conf)
         , ((modm                 , xK_p)                    , shellPrompt myXPConfig)
@@ -144,11 +145,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm .|. shiftMask   , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume 0 -1%")
         , ((modm .|. shiftMask   , xF86XK_AudioMute)        , spawn "pactl set-sink-volume 0 100%")
 
-        , ((0                    , xF86XK_AudioPlay)        , spawn "mpc toggle")
-        , ((0                    , xF86XK_AudioStop)        , spawn "mpc stop")
-        , ((0                    , xF86XK_AudioNext)        , spawn "mpc next")
-        , ((0                    , xF86XK_AudioPrev)        , spawn "mpc prev")
-        , ((0                    , xF86XK_Calculator)       , spawn "qalculate")
+        , ((modm                 , xF86XK_AudioPlay)        , spawn "mpc toggle")
+        , ((modm                 , xF86XK_AudioStop)        , spawn "mpc stop")
+        , ((modm                 , xF86XK_AudioNext)        , spawn "mpc next")
+        , ((modm                 , xF86XK_AudioPrev)        , spawn "mpc prev")
+        , ((modm                 , xF86XK_Calculator)       , spawn "qalculate")
 
         , ((0                    , xF86XK_TouchpadToggle)   , spawn "xinput --disable 'ETPS/2 Elantech Touchpad'")
         , ((shiftMask            , xF86XK_TouchpadToggle)   , spawn "xinput --enable  'ETPS/2 Elantech Touchpad'")
@@ -160,19 +161,16 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
 -- }}}
 -- Mouse bindings: default actions bound to mouse events {{{
+myMouseBindings :: XConfig t -> M.Map (KeyMask, Button) (Window -> X ())
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
-
     -- mod-button1, Set the window to floating mode and move by dragging
     [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
                                        >> windows W.shiftMaster))
-
     -- mod-button2, Raise the window to the top of the stack
     , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
-
     -- mod-button3, Set the window to floating mode and resize by dragging
     , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
                                        >> windows W.shiftMaster))
-
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 -- }}}
@@ -187,19 +185,25 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- which denotes layout choice.
 
 myLayout = avoidStruts (
-            renamed [Replace "Full"] ( common Full )
-        ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
-        ||| renamed [Replace "Tiled"] ( common tiled )
-        ||| renamed [Replace "Acordion"] ( common Accordion )
-        ||| renamed [Replace "Columns"] ( common $ ThreeColMid 1 0.03 0.5 )
-        ||| renamed [Replace "Simple"] ( common simpleFloat )
-        ||| renamed [Replace "Drawer"] ( common (drawer `onTop` (Tall 1 0.03 0.5)))
-    ) 
+            renamed [Replace "Full"] ( maximize . minimize $ Full )
+        ||| renamed [Replace "Mirror"] ( maximize . minimize $ Mirror tiled )
+        ||| renamed [Replace "Tiled"] ( maximize . minimize $ tiled )
+        ||| renamed [Replace "Acordion"] ( maximize . minimize $ Accordion )
+        ||| renamed [Replace "Columns"] ( maximize . minimize $ ThreeColMid 1 0.03 0.5 )
+        ||| renamed [Replace "Simple"] ( maximize . minimize $  simpleFloat )
+        ||| renamed [Replace "Drawer"] ( maximize . minimize $ (drawer `onTop` (Tall 1 0.03 0.5)))
+        -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
+        -- ||| renamed [Replace "Tiled"] ( common tiled )
+        -- ||| renamed [Replace "Acordion"] ( common Accordion )
+        -- ||| renamed [Replace "Columns"] ( common $ ThreeColMid 1 0.03 0.5 )
+        -- ||| renamed [Replace "Simple"] ( common simpleFloat )
+        -- ||| renamed [Replace "Drawer"] ( common (drawer `onTop` (Tall 1 0.03 0.5)))
+    )
     where
         drawer = simpleDrawer 0.01 0.3 (ClassName "Rhythmbox" `Or` ClassName "Sonata")
         -- Stuff common for all layout
         -- TODO should eventually remember haskell and replace this with and fmap or something
-        common l = maximize ( minimize ( l ) )
+        -- common l = maximize ( minimize ( l ) )
         -- default tiling algorithm partitions the screen into two panes
         tiled   = Tall 1 0.03 0.5
 
@@ -251,12 +255,14 @@ myLogHook h = dynamicLogWithPP $ defaultPP {
 -- per-workspace layout choices.
 
 -- By default, do nothing.
+myStartupHook :: X ()
 myStartupHook = return ()
 -- }}}
 -- Actually start xmonad {{{
+main :: IO ()
 main = do 
-        home <- getHomeDirectory
-        dzenPP <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600 -e '' -dock"
+        -- home <- getHomeDirectory
+        dzenPipe <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600 -e '' -dock"
         xmonad $ ewmh defaultConfig 
             { terminal           = myTerminal
             , focusFollowsMouse  = myFocusFollowsMouse
@@ -273,7 +279,7 @@ main = do
             , layoutHook         = myLayout
             , manageHook         = myManageHook
             , handleEventHook    = myEventHook
-            , logHook            = myLogHook dzenPP
+            , logHook            = myLogHook dzenPipe
             , startupHook        = myStartupHook
             }
 -- }}}
