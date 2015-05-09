@@ -1,29 +1,35 @@
 -- Imports {{{
 import XMonad
 
-import XMonad.Actions.CycleWS
+import XMonad.Actions.CycleWS (toggleWS, WSType(AnyWS))
 import XMonad.Actions.DynamicWorkspaces
+    ( addWorkspace, addWorkspacePrompt, removeWorkspace, selectWorkspace,
+    withWorkspace, withNthWorkspace, renameWorkspace, )
 import XMonad.Actions.DynamicWorkspaceOrder as DO
 
 import XMonad.Hooks.DynamicLog
+    ( dynamicLogWithPP, defaultPP, ppOutput, ppHiddenNoWindows, ppSort)
 import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.Minimize
-import XMonad.Hooks.EwmhDesktops
+    ( manageDocks, docksEventHook, avoidStruts, ToggleStruts(ToggleStruts))
+import XMonad.Hooks.Minimize (minimizeEventHook)
+import XMonad.Hooks.EwmhDesktops (ewmh, ewmhDesktopsEventHook)
 
 import XMonad.Prompt
-import XMonad.Prompt.Window
-import XMonad.Prompt.AppendFile
-import XMonad.Prompt.Shell
+    (XPPosition(Top,Bottom), Direction1D(Next,Prev), XPConfig(position),
+    defaultXPConfig, searchPredicate)
+import XMonad.Prompt.Window (windowPromptGoto, windowPromptBring)
+import XMonad.Prompt.AppendFile (appendFilePrompt)
+import XMonad.Prompt.Shell (shellPrompt)
 
-import XMonad.Util.Run
+import XMonad.Util.Run (hPutStrLn, spawnPipe)
 
-import XMonad.Layout.SimpleFloat
+import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Minimize
-import XMonad.Layout.Maximize
-import XMonad.Layout.Renamed
-import XMonad.Layout.Accordion
-import XMonad.Layout.ThreeColumns
-import XMonad.Layout.Drawer
+    (minimize, minimizeWindow, MinimizeMsg(RestoreNextMinimizedWin))
+import XMonad.Layout.Maximize (maximize, maximizeRestore)
+import XMonad.Layout.Renamed (renamed, Rename(Replace))
+import XMonad.Layout.Accordion (Accordion(Accordion))
+import XMonad.Layout.ThreeColumns (ThreeCol(ThreeColMid))
 import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
 
 import System.Exit
@@ -192,16 +198,13 @@ myLayout = avoidStruts (
         ||| renamed [Replace "Acordion"] ( maximize . minimize . boringWindows $ Accordion )
         ||| renamed [Replace "Columns"] ( maximize . minimize . boringWindows $ ThreeColMid 1 0.03 0.5 )
         ||| renamed [Replace "Simple"] ( maximize . minimize . boringWindows $  simpleFloat )
-        ||| renamed [Replace "Drawer"] ( maximize . minimize . boringWindows $ (drawer `onTop` (Tall 1 0.03 0.5)))
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )
         -- ||| renamed [Replace "Columns"] ( common $ ThreeColMid 1 0.03 0.5 )
         -- ||| renamed [Replace "Simple"] ( common simpleFloat )
-        -- ||| renamed [Replace "Drawer"] ( common (drawer `onTop` (Tall 1 0.03 0.5)))
     )
     where
-        drawer = simpleDrawer 0.01 0.3 (ClassName "Rhythmbox" `Or` ClassName "Sonata")
         -- Stuff common for all layout
         -- TODO find out how the fuck I can do this
         -- common l = maximize ( minimize ( boringWindows l ) )
