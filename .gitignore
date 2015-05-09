@@ -1,6 +1,7 @@
 *.ho
 *.hi
 *.o
+*.swp
 history
 xmonad-*-linux
 xmonad.errors
