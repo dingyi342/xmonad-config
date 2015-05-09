@@ -24,6 +24,7 @@ import XMonad.Layout.Renamed
 import XMonad.Layout.Accordion
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.Drawer
+import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
 
 import System.Exit
 import System.Directory
@@ -98,8 +99,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm                 , xK_c)                    , kill)
         , ((modm                 , xK_space)                , sendMessage NextLayout)
         , ((modm .|. shiftMask   , xK_space)                , setLayout $ XMonad.layoutHook conf)
-        , ((modm                 , xK_Tab)                  , windows W.focusDown)
-        , ((modm .|. shiftMask   , xK_Tab)                  , windows W.focusUp)
+        , ((modm                 , xK_Tab)                  , focusDown)
+        , ((modm .|. shiftMask   , xK_Tab)                  , focusUp)
         , ((modm                 , xK_Return)               , windows W.swapMaster)
         , ((modm .|. shiftMask   , xK_j)                    , windows W.swapDown)
         , ((modm .|. shiftMask   , xK_k)                    , windows W.swapUp)
@@ -185,13 +186,13 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- which denotes layout choice.
 
 myLayout = avoidStruts (
-            renamed [Replace "Full"] ( maximize . minimize $ Full )
-        ||| renamed [Replace "Mirror"] ( maximize . minimize $ Mirror tiled )
-        ||| renamed [Replace "Tiled"] ( maximize . minimize $ tiled )
-        ||| renamed [Replace "Acordion"] ( maximize . minimize $ Accordion )
-        ||| renamed [Replace "Columns"] ( maximize . minimize $ ThreeColMid 1 0.03 0.5 )
-        ||| renamed [Replace "Simple"] ( maximize . minimize $  simpleFloat )
-        ||| renamed [Replace "Drawer"] ( maximize . minimize $ (drawer `onTop` (Tall 1 0.03 0.5)))
+            renamed [Replace "Full"] ( maximize . minimize . boringWindows $ Full )
+        ||| renamed [Replace "Mirror"] ( maximize . minimize . boringWindows $ Mirror tiled )
+        ||| renamed [Replace "Tiled"] ( maximize . minimize . boringWindows $ tiled )
+        ||| renamed [Replace "Acordion"] ( maximize . minimize . boringWindows $ Accordion )
+        ||| renamed [Replace "Columns"] ( maximize . minimize . boringWindows $ ThreeColMid 1 0.03 0.5 )
+        ||| renamed [Replace "Simple"] ( maximize . minimize . boringWindows $  simpleFloat )
+        ||| renamed [Replace "Drawer"] ( maximize . minimize . boringWindows $ (drawer `onTop` (Tall 1 0.03 0.5)))
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )
@@ -202,8 +203,8 @@ myLayout = avoidStruts (
     where
         drawer = simpleDrawer 0.01 0.3 (ClassName "Rhythmbox" `Or` ClassName "Sonata")
         -- Stuff common for all layout
-        -- TODO should eventually remember haskell and replace this with and fmap or something
-        -- common l = maximize ( minimize ( l ) )
+        -- TODO find out how the fuck I can do this
+        -- common l = maximize ( minimize ( boringWindows l ) )
         -- default tiling algorithm partitions the screen into two panes
         tiled   = Tall 1 0.03 0.5
 
