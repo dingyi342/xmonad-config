@@ -119,8 +119,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
         , ((modm                 , xK_Right)                , DO.moveTo Next AnyWS)
         , ((modm                 , xK_Left)                 , DO.moveTo Prev AnyWS)
-        , ((modm .|. shiftMask   , xK_Right)                , DO.shiftTo Next AnyWS)
-        , ((modm .|. shiftMask   , xK_Left)                 , DO.shiftTo Prev AnyWS)
+        , ((modm .|. shiftMask   , xK_Right)                , DO.shiftTo Next AnyWS >> DO.moveTo Next AnyWS)
+        , ((modm .|. shiftMask   , xK_Left)                 , DO.shiftTo Prev AnyWS >> DO.moveTo Prev AnyWS)
         , ((modm .|. altMask     , xK_Right)                , DO.swapWith Next AnyWS)
         , ((modm .|. altMask     , xK_Left)                 , DO.swapWith Prev AnyWS)
 
