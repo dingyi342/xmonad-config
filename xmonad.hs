@@ -4,7 +4,7 @@ import XMonad
 import XMonad.Actions.CycleWS (toggleWS, WSType(AnyWS))
 import XMonad.Actions.DynamicWorkspaces
     ( addWorkspace, addWorkspacePrompt, removeWorkspace, selectWorkspace,
-    withWorkspace, withNthWorkspace, renameWorkspace, )
+    withWorkspace, withNthWorkspace, renameWorkspace)
 import XMonad.Actions.DynamicWorkspaceOrder as DO
 
 import XMonad.Hooks.DynamicLog
