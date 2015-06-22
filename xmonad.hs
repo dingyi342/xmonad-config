@@ -109,6 +109,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm                 , xK_space)                , sendMessage NextLayout)
         , ((modm .|. shiftMask   , xK_space)                , setLayout $ XMonad.layoutHook conf)
         , ((modm                 , xK_Tab)                  , rotOpposite)
+        , ((modm                 , xK_Up)                   , focusUp)
+        , ((modm                 , xK_Down)                 , focusDown)
         , ((modm                 , xK_Return)               , windows W.swapMaster)
         , ((modm .|. shiftMask   , xK_j)                    , windows W.swapDown)
         , ((modm .|. shiftMask   , xK_k)                    , windows W.swapUp)
