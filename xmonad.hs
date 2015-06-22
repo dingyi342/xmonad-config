@@ -36,6 +36,7 @@ import XMonad.Layout.NoBorders (smartBorders)
 import System.Exit
 import System.Directory
 import Graphics.X11.ExtraTypes.XF86
+import XMonad.Hooks.SetWMName (setWMName)
 
 import qualified XMonad.StackSet    as W
 import qualified Data.Map           as M
@@ -261,7 +262,7 @@ myLogHook h = dynamicLogWithPP $ defaultPP {
 
 -- By default, do nothing.
 myStartupHook :: X ()
-myStartupHook = return ()
+myStartupHook = setWMName "LG3D"
 -- }}}
 -- Actually start xmonad {{{
 main :: IO ()
