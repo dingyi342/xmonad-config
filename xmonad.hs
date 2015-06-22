@@ -31,6 +31,7 @@ import XMonad.Layout.Renamed (renamed, Rename(Replace))
 import XMonad.Layout.Accordion (Accordion(Accordion))
 import XMonad.Layout.ThreeColumns (ThreeCol(ThreeColMid))
 import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
+import XMonad.Layout.NoBorders (smartBorders)
 
 import System.Exit
 import System.Directory
@@ -56,7 +57,7 @@ myClickJustFocuses = False
 
 -- Width of the window border in pixels.
 myBorderWidth :: Dimension
-myBorderWidth = 0
+myBorderWidth = 1
 
 -- modMask lets you specify which modkey you want to use. The default
 -- is mod1Mask ("left alt").  You may also consider using mod3Mask
@@ -192,12 +193,12 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- which denotes layout choice.
 
 myLayout = avoidStruts (
-            renamed [Replace "Full"] ( maximize . minimize . boringWindows $ Full )
-        ||| renamed [Replace "Mirror"] ( maximize . minimize . boringWindows $ Mirror tiled )
-        ||| renamed [Replace "Tiled"] ( maximize . minimize . boringWindows $ tiled )
-        ||| renamed [Replace "Acordion"] ( maximize . minimize . boringWindows $ Accordion )
-        ||| renamed [Replace "Columns"] ( maximize . minimize . boringWindows $ ThreeColMid 1 0.03 0.5 )
-        ||| renamed [Replace "Simple"] ( maximize . minimize . boringWindows $  simpleFloat )
+            renamed [Replace "Full"]     ( smartBorders . maximize . minimize . boringWindows $ Full )
+        ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows $ Mirror tiled )
+        ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows $ tiled )
+        ||| renamed [Replace "Acordion"] ( smartBorders . maximize . minimize . boringWindows $ Accordion )
+        ||| renamed [Replace "Columns"]  ( smartBorders . maximize . minimize . boringWindows $ ThreeColMid 1 0.03 0.5 )
+        ||| renamed [Replace "Simple"]   ( smartBorders . maximize . minimize . boringWindows $  simpleFloat )
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )
