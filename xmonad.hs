@@ -5,6 +5,7 @@ import XMonad.Actions.CycleWS (toggleWS, WSType(AnyWS))
 import XMonad.Actions.DynamicWorkspaces
     ( addWorkspace, addWorkspacePrompt, removeWorkspace, selectWorkspace,
     withWorkspace, withNthWorkspace, renameWorkspace)
+import XMonad.Actions.CycleWindows (rotOpposite)
 import XMonad.Actions.DynamicWorkspaceOrder as DO
 
 import XMonad.Hooks.DynamicLog
@@ -107,8 +108,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm                 , xK_c)                    , kill)
         , ((modm                 , xK_space)                , sendMessage NextLayout)
         , ((modm .|. shiftMask   , xK_space)                , setLayout $ XMonad.layoutHook conf)
-        , ((modm                 , xK_Tab)                  , focusDown)
-        , ((modm .|. shiftMask   , xK_Tab)                  , focusUp)
+        , ((modm                 , xK_Tab)                  , rotOpposite)
         , ((modm                 , xK_Return)               , windows W.swapMaster)
         , ((modm .|. shiftMask   , xK_j)                    , windows W.swapDown)
         , ((modm .|. shiftMask   , xK_k)                    , windows W.swapUp)
