@@ -45,6 +45,7 @@ import qualified Data.List          as L
 -- }}}
 -- Common defaults {{{
 -- The preferred terminal program, which is used in a binding below and by
+home = "/home/ludat/"
 -- certain contrib modules.
 myTerminal :: String
 myTerminal = "urxvtc"
@@ -141,7 +142,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = M.fromList $
         , ((modm                 , xK_Escape)               , restart "xmonad" True)
         , ((modm .|. shiftMask   , xK_Escape)               , io ExitSuccess)
 
-        , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig "/home/lucas/NOTES")
+        , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig home ++ "NOTES")
 
         , ((modm .|. shiftMask   , xK_BackSpace)            , removeWorkspace)
         , ((modm .|. shiftMask   , xK_v)                    , selectWorkspace myXPConfig)
