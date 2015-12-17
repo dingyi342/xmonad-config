@@ -46,7 +46,7 @@ import qualified Data.List          as L
 -- Common defaults {{{
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
-myTerminal :: [Char]
+myTerminal :: String
 myTerminal = "urxvtc"
 
 -- Whether focus follows the mouse pointer.
@@ -69,9 +69,9 @@ myModMask :: KeyMask
 myModMask = mod4Mask
 
 -- Border colors for unfocused and focused windows, respectively.
-myNormalBorderColor :: [Char]
+myNormalBorderColor :: String
 myNormalBorderColor  = "#dddddd"
-myFocusedBorderColor :: [Char]
+myFocusedBorderColor :: String
 myFocusedBorderColor = "#ff0000"
 -- }}}
 -- Workspaces {{{
@@ -102,7 +102,7 @@ myXPConfig = defaultXPConfig {
         -- , ((modm                 , xK_p        ) , spawn "dmenu_run")
 
 myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
-myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
+myKeys conf@XConfig {XMonad.modMask = modm} = M.fromList $
     [     ((modm .|. shiftMask   , xK_Return)               , spawn $ XMonad.terminal conf)
         , ((modm                 , xK_p)                    , shellPrompt myXPConfig)
         , ((modm                 , xK_c)                    , kill)
@@ -139,7 +139,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((modm                 , xK_r)                    , withFocused (sendMessage . maximizeRestore))
 
         , ((modm                 , xK_Escape)               , restart "xmonad" True)
-        , ((modm .|. shiftMask   , xK_Escape)               , io (exitWith ExitSuccess))
+        , ((modm .|. shiftMask   , xK_Escape)               , io ExitSuccess)
 
         , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig "/home/lucas/NOTES")
 
@@ -168,22 +168,22 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         , ((shiftMask            , xF86XK_TouchpadToggle)   , spawn "xinput --enable  'ETPS/2 Elantech Touchpad'")
     ]
     ++
-    zip (zip (repeat (modm)) [xK_1..xK_9]) (map (DO.withNthWorkspace W.greedyView) [0..])
+    zip (zip (repeat modm) [xK_1..xK_9]) (map (DO.withNthWorkspace W.greedyView) [0..])
     ++
     zip (zip (repeat (modm .|. shiftMask)) [xK_1..xK_9]) (map (DO.withNthWorkspace W.shift) [0..])
 
 -- }}}
 -- Mouse bindings: default actions bound to mouse events {{{
 myMouseBindings :: XConfig t -> M.Map (KeyMask, Button) (Window -> X ())
-myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
+myMouseBindings XConfig {XMonad.modMask = modm} = M.fromList $
     -- mod-button1, Set the window to floating mode and move by dragging
-    [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
-                                       >> windows W.shiftMaster))
+    [ (modm, button1), (\w -> focus w >> mouseMoveWindow w
+                                       >> windows W.shiftMaster)
     -- mod-button2, Raise the window to the top of the stack
-    , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
+    , (modm, button2), (\w -> focus w >> windows W.shiftMaster)
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
-                                       >> windows W.shiftMaster))
+    , (modm, button3), (\w -> focus w >> mouseResizeWindow w
+                                       >> windows W.shiftMaster)
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 -- }}}
