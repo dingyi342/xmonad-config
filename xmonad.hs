@@ -4,20 +4,19 @@ import XMonad
 import XMonad.Actions.CycleWS (toggleWS, WSType(AnyWS))
 import XMonad.Actions.DynamicWorkspaces
     ( addWorkspace, addWorkspacePrompt, removeWorkspace, selectWorkspace,
-    withWorkspace, withNthWorkspace, renameWorkspace)
-import XMonad.Actions.CycleWindows (rotOpposite)
+    withWorkspace, renameWorkspace)
 import XMonad.Actions.DynamicWorkspaceOrder as DO
 
 import XMonad.Hooks.DynamicLog
-    ( dynamicLogWithPP, defaultPP, ppOutput, ppHiddenNoWindows, ppSort)
+    ( dynamicLogWithPP, ppOutput, ppHiddenNoWindows, ppSort)
 import XMonad.Hooks.ManageDocks
     ( manageDocks, docksEventHook, avoidStruts, ToggleStruts(ToggleStruts))
 import XMonad.Hooks.Minimize (minimizeEventHook)
 import XMonad.Hooks.EwmhDesktops (ewmh, ewmhDesktopsEventHook)
 
 import XMonad.Prompt
-    (XPPosition(Top,Bottom), Direction1D(Next,Prev), XPConfig(position),
-    defaultXPConfig, searchPredicate)
+    (XPPosition(Top), Direction1D(Next,Prev), XPConfig(position),
+    searchPredicate)
 import XMonad.Prompt.Window (windowPromptGoto, windowPromptBring)
 import XMonad.Prompt.AppendFile (appendFilePrompt)
 import XMonad.Prompt.Shell (shellPrompt)
@@ -35,7 +34,6 @@ import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
 import XMonad.Layout.NoBorders (smartBorders)
 
 import System.Exit
-import System.Directory
 import Graphics.X11.ExtraTypes.XF86
 import XMonad.Hooks.SetWMName (setWMName)
 
@@ -45,6 +43,7 @@ import qualified Data.List          as L
 -- }}}
 -- Common defaults {{{
 -- The preferred terminal program, which is used in a binding below and by
+home :: String
 home = "/home/ludat/"
 -- certain contrib modules.
 myTerminal :: String
@@ -93,7 +92,7 @@ altMask = mod1Mask -- mod1Mask just isn't verbose enough
 xF86XK_TouchpadToggle :: KeySym
 xF86XK_TouchpadToggle = 269025193
 myXPConfig :: XPConfig
-myXPConfig = defaultXPConfig {
+myXPConfig = def {
                     position = Top
                     , searchPredicate = L.isInfixOf
                 }
@@ -140,9 +139,9 @@ myKeys conf@XConfig {XMonad.modMask = modm} = M.fromList $
         , ((modm                 , xK_r)                    , withFocused (sendMessage . maximizeRestore))
 
         , ((modm                 , xK_Escape)               , restart "xmonad" True)
-        , ((modm .|. shiftMask   , xK_Escape)               , io ExitSuccess)
+        , ((modm .|. shiftMask   , xK_Escape)               , io exitSuccess)
 
-        , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig home ++ "NOTES")
+        , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig $ home ++ "NOTES")
 
         , ((modm .|. shiftMask   , xK_BackSpace)            , removeWorkspace)
         , ((modm .|. shiftMask   , xK_v)                    , selectWorkspace myXPConfig)
@@ -176,14 +175,14 @@ myKeys conf@XConfig {XMonad.modMask = modm} = M.fromList $
 -- }}}
 -- Mouse bindings: default actions bound to mouse events {{{
 myMouseBindings :: XConfig t -> M.Map (KeyMask, Button) (Window -> X ())
-myMouseBindings XConfig {XMonad.modMask = modm} = M.fromList $
+myMouseBindings XConfig {XMonad.modMask = modm} = M.fromList
     -- mod-button1, Set the window to floating mode and move by dragging
-    [ (modm, button1), (\w -> focus w >> mouseMoveWindow w
+    [ ((modm, button1), \w -> focus w >> mouseMoveWindow w
                                        >> windows W.shiftMaster)
     -- mod-button2, Raise the window to the top of the stack
-    , (modm, button2), (\w -> focus w >> windows W.shiftMaster)
-    -- mod-button3, Set the window to floating mode and resize by dragging
-    , (modm, button3), (\w -> focus w >> mouseResizeWindow w
+    , ((modm, button2), \w -> focus w >> windows W.shiftMaster)
+    -- mod-button3, Set the window to floating mode and re size by dragging
+    , ((modm, button3), \w -> focus w >> mouseResizeWindow w
                                        >> windows W.shiftMaster)
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
@@ -253,7 +252,7 @@ myEventHook = docksEventHook <+> ewmhDesktopsEventHook <+> minimizeEventHook
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 
-myLogHook h = dynamicLogWithPP $ defaultPP {
+myLogHook h = dynamicLogWithPP $ def {
             ppOutput = hPutStrLn h
             , ppHiddenNoWindows = id
             , ppSort = DO.getSortByOrder
@@ -271,10 +270,10 @@ myStartupHook = setWMName "LG3D"
 -- }}}
 -- Actually start xmonad {{{
 main :: IO ()
-main = do 
+main = do
         -- home <- getHomeDirectory
         dzenPipe <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600 -e '' -dock"
-        xmonad $ ewmh defaultConfig 
+        xmonad $ ewmh def
             { terminal           = myTerminal
             , focusFollowsMouse  = myFocusFollowsMouse
             , clickJustFocuses   = myClickJustFocuses
