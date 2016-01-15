@@ -37,6 +37,7 @@ import System.Exit
 import Graphics.X11.ExtraTypes.XF86
 import XMonad.Hooks.SetWMName (setWMName)
 
+import Network.Socket
 import qualified XMonad.StackSet    as W
 import qualified Data.Map           as M
 import qualified Data.List          as L
@@ -253,9 +254,9 @@ myEventHook = docksEventHook <+> ewmhDesktopsEventHook <+> minimizeEventHook
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 
 myLogHook s = dynamicLogWithPP $ def {
-            ppOutput = (\c -> do
+            ppOutput = \c -> do
                             send s c
-                            return ())
+                            return ()
             , ppHiddenNoWindows = id
             , ppSort = DO.getSortByOrder
         }
@@ -273,11 +274,10 @@ myStartupHook = setWMName "LG3D"
 -- Actually start xmonad {{{
 main :: IO ()
 main = do
-        home <- getHomeDirectory
         dzenSoc <- socket AF_UNIX Stream 0
         connect dzenSoc (SockAddrUnix (home ++ "/.xmonad/log.soc"))
         -- dzenPP <- spawnPipe "dzen2 -ta l -bg '#161616' -fn 'Terminus:size=8' -w 600 -e '' -dock"
-        xmonad $ ewmh defaultConfig
+        xmonad $ ewmh def
             { terminal           = myTerminal
             , focusFollowsMouse  = myFocusFollowsMouse
             , clickJustFocuses   = myClickJustFocuses
