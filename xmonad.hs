@@ -255,7 +255,7 @@ myEventHook = docksEventHook <+> ewmhDesktopsEventHook <+> minimizeEventHook
 
 myLogHook s = dynamicLogWithPP $ def {
             ppOutput = \c -> do
-                            send s c
+                            send s $ c ++ "\n"
                             return ()
             , ppHiddenNoWindows = id
             , ppSort = DO.getSortByOrder
