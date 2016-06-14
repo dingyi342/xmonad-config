@@ -22,6 +22,7 @@ import XMonad.Prompt.AppendFile (appendFilePrompt)
 import XMonad.Prompt.Shell (shellPrompt)
 
 import XMonad.Util.Run (hPutStrLn, spawnPipe)
+import XMonad.Util.EZConfig (mkKeymap)
 
 import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Minimize
@@ -34,7 +35,6 @@ import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
 import XMonad.Layout.NoBorders (smartBorders)
 
 import System.Exit
-import Graphics.X11.ExtraTypes.XF86
 import XMonad.Hooks.SetWMName (setWMName)
 
 import qualified XMonad.StackSet    as W
@@ -87,91 +87,86 @@ myWorkspaces :: [String]
 myWorkspaces = ["term"]
 -- }}}
 -- Key bindings. Add, modify or remove key bindings here. {{{
-altMask :: KeyMask
-altMask = mod1Mask -- mod1Mask just isn't verbose enough
-xF86XK_TouchpadToggle :: KeySym
-xF86XK_TouchpadToggle = 269025193
 myXPConfig :: XPConfig
 myXPConfig = def {
                     position = Top
                     , searchPredicate = L.isInfixOf
                 }
-        -- , ((modm                 , xK_m        ) , windows W.focusMaster)
-        -- , ((modm                 , xK_n        ) , refresh)
-        -- , ((modm .|. shiftMask   , xK_m        ) , withWorkspace myXPConfig (windows . copy))
-        -- , ((modm                 , xK_p        ) , spawn "dmenu_run")
+
+        -- , ( "M-m"   , windows W.focusMaster)
+        -- , ( "M-n"   , refresh)
+        -- , ( "M-S-m" , withWorkspace myXPConfig (windows . copy))
+        -- , ( "M-p"   , spawn "dmenu_run")
 
 myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
-myKeys conf@XConfig {XMonad.modMask = modm} = M.fromList $
-    [     ((modm .|. shiftMask   , xK_Return)               , spawn $ XMonad.terminal conf)
-        , ((modm                 , xK_p)                    , shellPrompt myXPConfig)
-        , ((modm                 , xK_c)                    , kill)
-        , ((modm                 , xK_space)                , sendMessage NextLayout)
-        , ((modm .|. shiftMask   , xK_space)                , setLayout $ XMonad.layoutHook conf)
-        -- , ((modm                 , xK_Tab)                  , rotOpposite)
-        , ((modm                 , xK_Up)                   , focusUp)
-        , ((modm                 , xK_Down)                 , focusDown)
-        , ((modm                 , xK_Tab)                  , focusDown)
-        , ((modm .|. shiftMask   , xK_Tab)                  , focusUp)
-        , ((modm                 , xK_Return)               , windows W.swapMaster)
-        , ((modm .|. shiftMask   , xK_j)                    , windows W.swapDown)
-        , ((modm .|. shiftMask   , xK_k)                    , windows W.swapUp)
-        , ((modm                 , xK_h)                    , sendMessage Shrink)
-        , ((modm                 , xK_l)                    , sendMessage Expand)
-        , ((modm                 , xK_t)                    , withFocused $ windows . W.sink)
-        , ((modm                 , xK_comma)                , sendMessage $ IncMasterN 1)
-        , ((modm                 , xK_period)               , sendMessage $ IncMasterN (-1))
-        , ((modm                 , xK_b)                    , sendMessage ToggleStruts)
+myKeys conf@XConfig {XMonad.modMask = modm} = mkKeymap conf
+        [( "M-S-<Return>"    , spawn $ XMonad.terminal conf)
+        , ( "M-p"             , shellPrompt myXPConfig)
+        , ( "M-c"             , kill)
+        , ( "M-<Space>"       , sendMessage NextLayout)
+        , ( "M-S-<Space>"     , setLayout $ XMonad.layoutHook conf)
+        -- , ( "M-<Tab>"         , rotOpposite)
+        , ( "M-<Up>"          , focusUp)
+        , ( "M-<Down>"        , focusDown)
+        , ( "M-<Tab>"         , focusDown)
+        , ( "M-S-<Tab>"       , focusUp)
+        , ( "M-<Return>"      , windows W.swapMaster)
+        , ( "M-S-j"           , windows W.swapDown)
+        , ( "M-S-k"           , windows W.swapUp)
+        , ( "M-S-h"           , sendMessage Shrink)
+        , ( "M-S-l"           , sendMessage Expand)
+        , ( "M-t"             , withFocused $ windows . W.sink)
+        , ( "M-,"             , sendMessage $ IncMasterN 1)
+        , ( "M-."             , sendMessage $ IncMasterN (-1))
+        , ( "M-b"             , sendMessage ToggleStruts)
 
-        , ((modm                 , xK_Right)                , DO.moveTo Next AnyWS)
-        , ((modm                 , xK_Left)                 , DO.moveTo Prev AnyWS)
-        , ((modm .|. shiftMask   , xK_Right)                , DO.shiftTo Next AnyWS >> DO.moveTo Next AnyWS)
-        , ((modm .|. shiftMask   , xK_Left)                 , DO.shiftTo Prev AnyWS >> DO.moveTo Prev AnyWS)
-        , ((modm .|. altMask     , xK_Right)                , DO.swapWith Next AnyWS)
-        , ((modm .|. altMask     , xK_Left)                 , DO.swapWith Prev AnyWS)
+        , ( "M-<Right>"       , DO.moveTo Next AnyWS)
+        , ( "M-<Left>"        , DO.moveTo Prev AnyWS)
+        , ( "M-S-<Right>"     , DO.shiftTo Next AnyWS >> DO.moveTo Next AnyWS)
+        , ( "M-S-<Right>"     , DO.shiftTo Prev AnyWS >> DO.moveTo Prev AnyWS)
+        , ( "M-M1-<Right>"    , DO.swapWith Next AnyWS)
+        , ( "M-M1-<Left>"     , DO.swapWith Prev AnyWS)
 
-        , ((modm                 , xK_z)                    , toggleWS)
-        , ((modm .|. shiftMask   , xK_g)                    , windowPromptGoto  myXPConfig)
-        , ((modm .|. shiftMask   , xK_b)                    , windowPromptBring myXPConfig)
+        , ( "M-z"             , toggleWS)
+        , ( "M-S-g"           , windowPromptGoto  myXPConfig)
+        , ( "M-S-b"           , windowPromptBring myXPConfig)
 
-        , ((modm                 , xK_s)                    , withFocused minimizeWindow)
-        , ((modm .|. shiftMask   , xK_s)                    , sendMessage RestoreNextMinimizedWin)
-        , ((modm                 , xK_r)                    , withFocused (sendMessage . maximizeRestore))
+        , ( "M-s"             , withFocused minimizeWindow)
+        , ( "M-S-s"           , sendMessage RestoreNextMinimizedWin)
+        , ( "M-r"             , withFocused (sendMessage . maximizeRestore))
 
-        , ((modm                 , xK_Escape)               , restart "xmonad" True)
-        , ((modm .|. shiftMask   , xK_Escape)               , io exitSuccess)
+        , ( "M-<Esc>"         , restart "xmonad" True)
+        , ( "M-S-<Esc>"       , io exitSuccess)
 
-        , ((modm .|. controlMask , xK_n)                    , appendFilePrompt myXPConfig $ home ++ "NOTES")
+        , ( "M-C-n"           , appendFilePrompt myXPConfig $ home ++ "NOTES")
 
-        , ((modm .|. shiftMask   , xK_BackSpace)            , removeWorkspace)
-        , ((modm .|. shiftMask   , xK_v)                    , selectWorkspace myXPConfig)
-        , ((modm                 , xK_m)                    , withWorkspace myXPConfig (windows . W.shift))
-        , ((modm .|. controlMask , xK_r)                    , renameWorkspace myXPConfig)
-        , ((modm                 , xK_n)                    , addWorkspacePrompt myXPConfig)
+        , ( "M-S-<Backspace>" , removeWorkspace)
+        , ( "M-S-v"           , selectWorkspace myXPConfig)
+        , ( "M-m"             , withWorkspace myXPConfig (windows . W.shift))
+        , ( "M-C-r"           , renameWorkspace myXPConfig)
+        , ( "M-n"             , addWorkspacePrompt myXPConfig)
 
-        , ((modm .|. controlMask , xK_l)                    , spawn "xscreensaver-command -lock")
+        , ( "M-C-l"           , spawn "xscreensaver-command -lock")
 
-        , ((modm                 , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume 0 +5%")
-        , ((modm                 , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume 0 -5%")
-        , ((modm                 , xF86XK_AudioMute)        , spawn "pactl set-sink-mute 0 toggle")
-        , ((modm .|. shiftMask   , xF86XK_AudioRaiseVolume) , spawn "pactl set-sink-volume 0 +1%")
-        , ((modm .|. shiftMask   , xF86XK_AudioLowerVolume) , spawn "pactl set-sink-volume 0 -1%")
-        , ((modm .|. shiftMask   , xF86XK_AudioMute)        , spawn "pactl set-sink-volume 0 100%")
+        , ( "M-<XF86AudioRaiseVolume>"    , spawn "pactl set-sink-volume 0 +5%")
+        , ( "M-<XF86AudioLowerVolume>"    , spawn "pactl set-sink-volume 0 -5%")
+        , ( "M-<XF86AudioMute>"           , spawn "pactl set-sink-mute 0 toggle")
+        , ( "M-S-<XF86AudioRaiseVolume>"  , spawn "pactl set-sink-volume 0 +1%")
+        , ( "M-S-<XF86AudioLowerVolume>"  , spawn "pactl set-sink-volume 0 -1%")
+        , ( "M-S-<XF86AudioMute>"         , spawn "pactl set-sink-volume 0 100%")
 
-        , ((modm                 , xF86XK_AudioPlay)        , spawn "mpc toggle")
-        , ((modm                 , xF86XK_AudioStop)        , spawn "mpc stop")
-        , ((modm                 , xF86XK_AudioNext)        , spawn "mpc next")
-        , ((modm                 , xF86XK_AudioPrev)        , spawn "mpc prev")
-        , ((modm                 , xF86XK_Calculator)       , spawn "qalculate")
+        , ( "M-<XF86AudioPlay>"  , spawn "mpc toggle")
+        , ( "M-<XF86AudioStop>"  , spawn "mpc stop")
+        , ( "M-<XF86AudioNext>"  , spawn "mpc next")
+        , ( "M-<XF86AudioPrev>"  , spawn "mpc prev")
+        , ( "M-<XF86Calculator>" , spawn "qalculate")
 
-        , ((0                    , xF86XK_TouchpadToggle)   , spawn "xinput --disable 'ETPS/2 Elantech Touchpad'")
-        , ((shiftMask            , xF86XK_TouchpadToggle)   , spawn "xinput --enable  'ETPS/2 Elantech Touchpad'")
-    ]
-    ++
+        , ( "<XF86TouchpadToggle>"    , spawn "xinput --disable 'ETPS/2 Elantech Touchpad'")
+        , ( "S-<XF86TouchpadToggle>"  , spawn "xinput --enable  'ETPS/2 Elantech Touchpad'")
+    ] `M.union` M.fromList (
     zip (zip (repeat modm) [xK_1..xK_9]) (map (DO.withNthWorkspace W.greedyView) [0..])
     ++
-    zip (zip (repeat (modm .|. shiftMask)) [xK_1..xK_9]) (map (DO.withNthWorkspace W.shift) [0..])
-
+    zip (zip (repeat (modm .|. shiftMask)) [xK_1..xK_9]) (map (DO.withNthWorkspace W.shift) [0..]))
 -- }}}
 -- Mouse bindings: default actions bound to mouse events {{{
 myMouseBindings :: XConfig t -> M.Map (KeyMask, Button) (Window -> X ())
